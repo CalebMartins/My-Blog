@@ -1,0 +1,74 @@
+{% include "header.html" %}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('{{post.img_url}}')">
+	<div class="overlay"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 col-md-10 mx-auto">
+				<div class="post-heading">
+					<h1>{{post.title}}</h1>
+					<h2 class="subheading">{{post.subtitle}}</h2>
+					<span class="meta">Posted by
+              <a href="#">{{ post.author.name }}</a>
+              on {{post.date}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>
+            {{post.body|safe}}
+          </p>
+          <hr>
+          {% if current_user.id == 1 %}
+            <div class="clearfix">
+              <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
+            </div>
+          {% endif %}  
+        </div>
+      </div>
+    </div>
+  </article>
+  <hr>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">  
+      
+      <form action="{{ url_for('show_post', index=post.id) }}", method="post">
+        {{ form.hidden_tag() }}
+        <fieldset>
+          <div class="form-group">
+            {{ form.comment.label(class='mt-2 text-dark h-2') }}
+            {{ form.comment(class='form-control form-control-lg') }}
+          </div>
+        </fieldset>
+        <div class="form-group">
+          {{ form.submit(class="btn btn-outline-primary btn-lg mt-3") }}
+        </div>
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='comment') }}
+      </form>
+      {% for comment in post.comments %}
+        <ul class="commentList">
+          <li>
+              <div class="commenterImage">
+                  <img src="{{ comment.comment_author.email | gravatar }}"/>
+              </div>
+              <div class="commentText">
+                  {{comment.text|safe}}
+                  <span class="date sub-text">{{comment.comment_author.name}}</span>
+              </div>
+          </li>
+        </ul>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}
